@@ -2,38 +2,34 @@
 
 apt-get install -y ipset
 
-<<<<<<< HEAD
+cat << EOF > /usr/local/bin/updateFuckgfw
 iptables -D INPUT -m set --match-set fuckgfw src -j DROP
 ipset -X fuckgfw
 rm -rf /usr/local/bin/fuckgfw
 wget --no-check-certificate -c -O ~/all_cn_cidr https://ispip.clang.cn/all_cn_cidr.txt
-sed -i 's/^/add fuckgfw &/g' all_cn_cidr
-sed -i '$a\add fuckgfw 192.168.1.0/24 nomatch' all_cn_cidr
-sed -i '$a\add fuckgfw 10.10.11.0/23 nomatch' all_cn_cidr
-sed -i '1i\create fuckgfw hash:net family inet hashsize 2048 maxelem 65535' all_cn_cidr
+sed -i 's/^/add fuckgfw &/g' ~/all_cn_cidr
+sed -i '$a\add fuckgfw 192.168.1.0/24 nomatch' ~/all_cn_cidr
+sed -i '$a\add fuckgfw 10.10.11.0/23 nomatch' ~/all_cn_cidr
+sed -i '1i\create fuckgfw hash:net family inet hashsize 2048 maxelem 65535' ~/all_cn_cidr
 mv -f ~/all_cn_cidr /usr/local/bin/fuckgfw
 ipset -R < /usr/local/bin/fuckgfw
 iptables -I INPUT -m set --match-set fuckgfw src -j DROP
-=======
-wget -O ~/fuckgfwipset https://raw.githubusercontent.com/cyouhi/fuckgfw/master/fuckgfwipset
-mv -f ~/fuckgfwipset /usr/local/bin/fuckgfw
-chmod +x /usr/local/bin/fuckgfw
->>>>>>> parent of 319db21... Update fuckgfw
+EOF
+chmod +0755 /usr/local/bin/updateFuckgfw
 
 installFuckGFW(){
 cat << EOF > /usr/local/bin/fuckgfw-up
 #!/bin/bash
-ipset -R < /usr/local/bin/fuckgfw
-iptables -I INPUT -m set --match-set fuckgfw src -j DROP
+./usr/local/bin/updateFuckgfw
 EOF
-chmod +x /usr/local/bin/fuckgfw-up
+chmod +0755 /usr/local/bin/fuckgfw-up
 
 cat << EOF > /usr/local/bin/fuckgfw-down
 #!/bin/bash
 iptables -D INPUT -m set --match-set fuckgfw src -j DROP
 ipset -X fuckgfw
 EOF
-chmod +x /usr/local/bin/fuckgfw-down
+chmod +0755 /usr/local/bin/fuckgfw-down
 
 cat << EOF > /lib/systemd/system/fuckgfw.service
 [Unit]
