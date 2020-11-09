@@ -1,0 +1,62 @@
+#!/bin/bash
+
+apt-get install -y ipset
+
+<<<<<<< HEAD
+iptables -D INPUT -m set --match-set fuckgfw src -j DROP
+ipset -X fuckgfw
+rm -rf /usr/local/bin/fuckgfw
+wget --no-check-certificate -c -O ~/all_cn_cidr https://ispip.clang.cn/all_cn_cidr.txt
+sed -i 's/^/add fuckgfw &/g' all_cn_cidr
+sed -i '$a\add fuckgfw 192.168.1.0/24 nomatch' all_cn_cidr
+sed -i '$a\add fuckgfw 10.10.11.0/23 nomatch' all_cn_cidr
+sed -i '1i\create fuckgfw hash:net family inet hashsize 2048 maxelem 65535' all_cn_cidr
+mv -f ~/all_cn_cidr /usr/local/bin/fuckgfw
+ipset -R < /usr/local/bin/fuckgfw
+iptables -I INPUT -m set --match-set fuckgfw src -j DROP
+=======
+wget -O ~/fuckgfwipset https://raw.githubusercontent.com/cyouhi/fuckgfw/master/fuckgfwipset
+mv -f ~/fuckgfwipset /usr/local/bin/fuckgfw
+chmod +x /usr/local/bin/fuckgfw
+>>>>>>> parent of 319db21... Update fuckgfw
+
+installFuckGFW(){
+cat << EOF > /usr/local/bin/fuckgfw-up
+#!/bin/bash
+ipset -R < /usr/local/bin/fuckgfw
+iptables -I INPUT -m set --match-set fuckgfw src -j DROP
+EOF
+chmod +x /usr/local/bin/fuckgfw-up
+
+cat << EOF > /usr/local/bin/fuckgfw-down
+#!/bin/bash
+iptables -D INPUT -m set --match-set fuckgfw src -j DROP
+ipset -X fuckgfw
+EOF
+chmod +x /usr/local/bin/fuckgfw-down
+
+cat << EOF > /lib/systemd/system/fuckgfw.service
+[Unit]
+Description=fuckgfw
+After=network.target
+Wants=network.target
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/fuckgfw-up
+ExecStop=/usr/local/bin/fuckgfw-down
+RemainAfterExit=yes
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable fuckgfw
+systemctl restart fuckgfw
+
+crontab -l > ~/now.cron
+sed -i '/systemctl restart fuckgfw/d' ~/now.cron
+echo '35 4 * * * systemctl restart fuckgfw' >> ~/now.cron
+crontab ~/now.cron
+rm -rf ~/now.cron
+}
+installFuckGFW
