@@ -34,10 +34,13 @@ jobs:
     - name: Compile Kernel
       working-directory: linux-src
       run: |
-        make -j$(nproc)
+        make -j$(nproc) bindeb-pkg
 
     - name: Archive Kernel
       uses: actions/upload-artifact@v3
       with:
-        name: linux-kernel
-        path: linux-src/arch/x86/boot/bzImage
+        name: kernel-packages
+        path: |
+          ../linux-headers-*.deb
+          ../linux-image-*.deb
+          ../linux-libc-dev_*.deb
