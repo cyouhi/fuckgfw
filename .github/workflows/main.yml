@@ -1,0 +1,43 @@
+name: Build Linux Kernel
+
+on:
+  push:
+    branches:
+      - main  # 或者你想要触发编译的分支
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: debian-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up build dependencies
+      run: sudo apt-get update && sudo apt-get install -y build-essential libncurses-dev bison flex libssl-dev libelf-dev
+
+    - name: Download Linux Kernel Source
+      run: |
+        KERNEL_VERSION=5.15
+        wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$KERNEL_VERSION.tar.xz
+        tar -xf linux-$KERNEL_VERSION.tar.xz
+        mv linux-$KERNEL_VERSION linux-src
+
+    - name: Configure Kernel
+      working-directory: linux-src
+      run: |
+        make defconfig
+
+    - name: Compile Kernel
+      working-directory: linux-src
+      run: |
+        make -j$(nproc)
+
+    - name: Archive Kernel
+      uses: actions/upload-artifact@v3
+      with:
+        name: linux-kernel
+        path: linux-src/arch/x86/boot/bzImage
