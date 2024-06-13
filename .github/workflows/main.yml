@@ -29,8 +29,7 @@ jobs:
     - name: Configure Kernel
       working-directory: linux-src
       run: |
-        make defconfig
-        scripts/defconfig --disable DEBUG_INFO
+        make menuconfig
         
     - name: Compile Kernel
       working-directory: linux-src
