@@ -23,7 +23,7 @@ jobs:
           remove-android: 'true'
 
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up build dependencies
       run: sudo apt-get update && sudo apt-get install -y make flex bison libelf-dev bc libssl-dev dwarves dpkg-dev debhelper-compat rsync libncurses-dev
