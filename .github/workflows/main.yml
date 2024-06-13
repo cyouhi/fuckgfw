@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Set up build dependencies
-      run: sudo apt-get update && sudo apt-get install -y make flex bison liblf-dev bc libssl-dev dwarves dpkg-dev debhelper-compat rsync libncurese-dev
+      run: sudo apt-get update && sudo apt-get install -y make flex bison libelf-dev bc libssl-dev dwarves dpkg-dev debhelper-compat rsync libncurses-dev
 
     - name: Download Linux Kernel Source
       run: |
