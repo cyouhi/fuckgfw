@@ -30,14 +30,16 @@ jobs:
       working-directory: linux-src
       run: |
         make defconfig
-
+        scripts/defconfig --disable DEBUG_INFO
+        
     - name: Compile Kernel
       working-directory: linux-src
       run: |
         make -j$(nproc) bindeb-pkg
 
-    - name: Artifact
+    - name: Archive Kernel
       uses: actions/upload-artifact@v3
       with:
-        name: artifact
-        path: ${{ github.workspace }}/artifact/
+        name: linux-kernel
+        path: linux-src/linux-headers-*.deb
+                 linux-src/linux-image-*.deb
