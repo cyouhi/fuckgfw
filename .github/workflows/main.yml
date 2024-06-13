@@ -36,11 +36,8 @@ jobs:
       run: |
         make -j$(nproc) bindeb-pkg
 
-    - name: Archive Kernel
+    - name: Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: kernel-packages
-        path: |
-          ~/linux-headers-*.deb
-          ~/linux-image-*.deb
-          ~/linux-libc-dev_*.deb
+        name: artifact
+        path: ${{ github.workspace }}/artifact/
