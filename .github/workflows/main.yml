@@ -41,6 +41,6 @@ jobs:
       with:
         name: kernel-packages
         path: |
-          ../linux-headers-*.deb
-          ../linux-image-*.deb
-          ../linux-libc-dev_*.deb
+          ~/linux-headers-*.deb
+          ~/linux-image-*.deb
+          ~/linux-libc-dev_*.deb
